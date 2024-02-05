@@ -4,6 +4,7 @@ const DataTable = () => {
     const [formData,setFormData] = useState({name:"",gender:"",age:""});
     const [data,setData] = useState([]);
     const [editMode, setEditMode] = useState(false);
+    const [searchTerm,setSearchTerm] = useState("");
     const outside = useRef(false);
     
     useEffect(()=>{
@@ -49,7 +50,9 @@ const DataTable = () => {
         });
         setData(newData);
     }
-    console.log(data);
+
+    let filteredData = data.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    
     
     
 
@@ -65,7 +68,8 @@ const DataTable = () => {
             
         </div>
         <div className="search-container">
-            <input type="text" className='search-input' placeholder='Search' name='search' />
+            <input type="text" className='search-input' placeholder='Search' name='search'
+            value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} />
             <table ref={outside}>
                 <thead>
                     <tr>
@@ -77,7 +81,7 @@ const DataTable = () => {
                 </thead>
                 <tbody>
                     {
-                    data.map((item) => {
+                    filteredData.map((item) => {
                         return(
                         <tr key={item.id}>
                         <td id={item.id} name='name' contentEditable={editMode === item.id} onBlur={(e)=>handleEdit(e,item.id,{name:e.target.innerText})}>{item.name}</td>
