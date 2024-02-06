@@ -1,10 +1,12 @@
-import React, { useEffect, useState ,useRef} from 'react'
+import React, { useEffect, useState ,useRef} from 'react';
+import db from "../data";
 
 const DataTable = () => {
     const [formData,setFormData] = useState({name:"",gender:"",age:""});
-    const [data,setData] = useState([]);
+    const [data,setData] = useState(db);
     const [editMode, setEditMode] = useState(false);
     const [searchTerm,setSearchTerm] = useState("");
+    const [page,setPage] = useState(1);
     const outside = useRef(false);
     
     useEffect(()=>{
@@ -19,6 +21,9 @@ const DataTable = () => {
             document.removeEventListener('click',handleClickOutside);
         }
     },[])
+    useEffect(()=>{
+    setPage(1);
+    },[searchTerm])
 
     const handleClickOutside = (e) =>{
      if(outside.current && !outside.current.contains(e.target)){
@@ -37,6 +42,9 @@ const DataTable = () => {
         }
     };
     const handleDelete = (id)=>{
+        if(filteredData.length === 1 && page > 1){
+            setPage(prev => prev-1);
+        }
      setData(prev => prev.filter(item => item.id !== id));
     }
     const handleEdit = (e,id,updatedObj) =>{
@@ -50,8 +58,11 @@ const DataTable = () => {
         });
         setData(newData);
     }
-
-    let filteredData = data.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    let itemsPerPage = 5;
+    let firstIndex = (page-1) * itemsPerPage;
+    let lastIndex = firstIndex + itemsPerPage;
+    let filteredItems = data.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    let filteredData = filteredItems.slice(firstIndex,lastIndex);
     
     
     
@@ -112,7 +123,17 @@ const DataTable = () => {
                     </tr> */}
                 </tbody>
             </table>
-            <div className="pagination"></div>
+            <div className="pagination">
+                {
+                    Array.from(
+                        {length:Math.ceil(filteredItems.length/itemsPerPage)},(_,index) => {
+                            return (
+                                <button style={{backgroundColor: (page === index + 1)?"green":"white"}} key={index+1} onClick={()=>setPage(index+1)}>{index+1}</button>
+                            )
+                        }
+                    )
+                }
+            </div>
                 
         </div>
 

@@ -105,6 +105,16 @@ flex-wrap: wrap;
   color: white;
   border-radius: .25rem;
 }
+.pagination{
+  display: flex;
+  gap: .5rem;
+}
+.pagination button{
+  border-radius: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 @media only screen and (max-width:600px){
   
   tr th{
